@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
+import { Outlet } from "react-router-dom";
 import "./App.css";
-import UsersList from "./components/UsersList";
 import { IUser } from "./Interface/IUser";
 import { ApiUser } from "./Interface/ApiUser";
 import { CircularProgress } from "@mui/material";
-import { UserProvider } from "./contexts/UserContext";
 
 const API_URL: string = "https://jsonplaceholder.typicode.com/";
 
@@ -59,7 +58,7 @@ function App() {
   }
 
   return (
-    <UserProvider>
+    <>
       <div className="modern-gradient-background"></div>
       <div className="app-content">
         <h1 className="app-title">TaskMaster</h1>
@@ -68,16 +67,10 @@ function App() {
           Organize tasks efficiently and boost productivity for multiple users.
         </p>
         <div className="user-list-container">
-          {isLoading ? (
-            <div>Loading...</div>
-          ) : error ? (
-            <div>Error: {error}</div>
-          ) : (
-            <UsersList users={users} />
-          )}
+          <Outlet context={{ users }} />
         </div>
       </div>
-    </UserProvider>
+    </>
   );
 }
 

@@ -1,13 +1,13 @@
-import React from "react";
+// import React from "react";
 import Card from "@mui/material/Card";
-
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { IUser } from "../Interface/IUser";
 import { styled } from "@mui/material/styles";
 import Avatar from "@mui/material/Avatar";
 import { lighten } from "@mui/material/styles";
-import { useUserContext } from "../contexts/UseUserContext.tsx";
+// import { useUserContext } from "../contexts/UseUserContext";
+import { useParams } from "react-router-dom";
 
 interface ClickableCardProps {
   userData: IUser;
@@ -33,8 +33,8 @@ const StyledCard = styled(Card, {
   "&:hover": {
     boxShadow: theme.shadows[3],
   },
-  height: "80px", // Fixed height for consistency
-  width: "100%", // Full width of the grid item
+  height: "80px",
+  width: "100%",
 }));
 
 const UserInfo = styled("div")({
@@ -59,18 +59,8 @@ const StyledButton = styled(Button)(({ theme }) => ({
 
 function User({ userData }: ClickableCardProps) {
   const { username, name, id } = userData;
-  const { selectedUser, setSelectedUser } = useUserContext();
-
-  const isSelected = selectedUser?.id === id;
-
-  const handleShowTodos = (event: React.MouseEvent) => {
-    event.stopPropagation();
-    if (isSelected) {
-      setSelectedUser(null);
-    } else {
-      setSelectedUser(userData);
-    }
-  };
+  const { userId } = useParams();
+  const isSelected = id.toString() === userId;
 
   const getInitials = (name: string) => {
     return name
@@ -98,7 +88,6 @@ function User({ userData }: ClickableCardProps) {
         variant={isSelected ? "contained" : "outlined"}
         color="primary"
         size="small"
-        onClick={handleShowTodos}
       >
         {isSelected ? "Hide Todos" : "Show Todos"}
       </StyledButton>
