@@ -14,12 +14,13 @@ import {
 import TodosItem from "./TodoItem";
 import { styled } from "@mui/material/styles";
 import { useUserContext } from "../contexts/UseUserContext.tsx";
+import { useParams } from "react-router-dom";
 
 const API_URL: string = "https://jsonplaceholder.typicode.com/";
 
-interface TodosModalProps {
-  userId: number;
-}
+// interface TodosModalProps {
+//   userId: number;
+// }
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(3),
@@ -58,7 +59,8 @@ async function fetchTodos(userId: number): Promise<ITodo[]> {
   return await response.json();
 }
 
-function TodosList({ userId }: TodosModalProps) {
+function TodosList() {
+  const { userId } = useParams<{ userId: string }>();
   const [todos, setTodos] = useState<ITodo[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -88,9 +90,11 @@ function TodosList({ userId }: TodosModalProps) {
     let isMounted = true;
 
     async function fetchData() {
+      if (!userId) return;
+
       try {
         setIsLoading(true);
-        const apiData = await fetchTodos(userId);
+        const apiData = await fetchTodos(parseInt(userId));
         if (isMounted) {
           setTodos(apiData);
           setError(null);
@@ -113,7 +117,7 @@ function TodosList({ userId }: TodosModalProps) {
     const storedUser = sessionStorage.getItem("selectedUser");
     const storedUserId = storedUser ? JSON.parse(storedUser).id : null;
 
-    if (userId !== storedUserId) {
+    if (userId !== storedUserId?.toString()) {
       setHideCompleted(false);
     } else {
       const storedHideCompleted = sessionStorage.getItem("hideCompleted");
