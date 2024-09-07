@@ -17,19 +17,30 @@ interface UserProviderProps {
 }
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
-  const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
-  const [hideCompleted, setHideCompleted] = useState<boolean>(false);
+  const [selectedUser, setSelectedUser] = useState<IUser | null>(() => {
+    const storedUser = sessionStorage.getItem("selectedUser");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
+
+  const [hideCompleted, setHideCompleted] = useState<boolean>(() => {
+    return sessionStorage.getItem("hideCompleted") === "true";
+  });
 
   useEffect(() => {
-    const storedHideCompleted = sessionStorage.getItem("hideCompleted");
-    if (storedHideCompleted) {
-      setHideCompleted(storedHideCompleted === "true");
+    if (selectedUser) {
+      sessionStorage.setItem("selectedUser", JSON.stringify(selectedUser));
+    } else {
+      sessionStorage.removeItem("selectedUser");
+      sessionStorage.removeItem("hideCompleted");
+      setHideCompleted(false);
     }
-  }, []);
+  }, [selectedUser]);
 
   useEffect(() => {
-    sessionStorage.setItem("hideCompleted", hideCompleted.toString());
-  }, [hideCompleted]);
+    if (selectedUser) {
+      sessionStorage.setItem("hideCompleted", hideCompleted.toString());
+    }
+  }, [hideCompleted, selectedUser]);
 
   return (
     <UserContext.Provider

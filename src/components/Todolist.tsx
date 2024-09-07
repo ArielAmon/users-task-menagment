@@ -110,7 +110,15 @@ function TodosList({ userId }: TodosModalProps) {
     }
 
     fetchData();
-    setHideCompleted(false);
+    const storedUser = sessionStorage.getItem("selectedUser");
+    const storedUserId = storedUser ? JSON.parse(storedUser).id : null;
+
+    if (userId !== storedUserId) {
+      setHideCompleted(false);
+    } else {
+      const storedHideCompleted = sessionStorage.getItem("hideCompleted");
+      setHideCompleted(storedHideCompleted === "true");
+    }
 
     return () => {
       isMounted = false;
