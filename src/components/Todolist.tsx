@@ -15,12 +15,11 @@ import TodosItem from "./TodoItem";
 import { styled } from "@mui/material/styles";
 import { useUserContext } from "../contexts/UseUserContext.tsx";
 import { useParams } from "react-router-dom";
+import { API_URL } from "../Constants/Global.tsx";
 
-const API_URL: string = "https://jsonplaceholder.typicode.com/";
-
-// interface TodosModalProps {
-//   userId: number;
-// }
+////////////////////////////////////////////////////////////////////////////////////
+//                    Styled components
+////////////////////////////////////////////////////////////////////////////////////
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(3),
@@ -33,12 +32,14 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   },
   display: "flex",
   flexDirection: "column",
-  height: "100%", // Take full height of parent
+  height: "100%",
 }));
+
+//------------------------------------------------------------------------------------
 
 const StyledList = styled(List)(({ theme }) => ({
   overflowY: "auto",
-  flexGrow: 1, // Allow list to grow and take available space
+  flexGrow: 1,
   "&::-webkit-scrollbar": {
     width: "8px",
   },
@@ -51,6 +52,9 @@ const StyledList = styled(List)(({ theme }) => ({
   },
 }));
 
+////////////////////////////////////////////////////////////////////////////////////
+//                  API Functions
+////////////////////////////////////////////////////////////////////////////////////
 async function fetchTodos(userId: number): Promise<ITodo[]> {
   const response = await fetch(`${API_URL}users/${userId}/todos`);
   if (!response.ok) {
@@ -59,6 +63,9 @@ async function fetchTodos(userId: number): Promise<ITodo[]> {
   return await response.json();
 }
 
+////////////////////////////////////////////////////////////////////////////////////
+//                  component function
+////////////////////////////////////////////////////////////////////////////////////
 function TodosList() {
   const { userId } = useParams<{ userId: string }>();
   const [todos, setTodos] = useState<ITodo[]>([]);
@@ -66,15 +73,19 @@ function TodosList() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { hideCompleted, setHideCompleted } = useUserContext();
 
+  //--------------------------------------------------------------------------------
+  // useCallback memoizes this function, preventing unnecessary re-creation on re-renders.
+  // It optimizes performance, especially when passed to child components.
+  //--------------------------------------------------------------------------------
+
   const handleTaskToggle = useCallback((taskId: number) => {
     setTodos((prevTodos) =>
       prevTodos.map((task) =>
         task.id === taskId ? { ...task, completed: !task.completed } : task
       )
     );
-    // Here you would typically also send an update to your backend
   }, []);
-
+  //--------------------------------------------------------------------------------
   const handleFilterChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setHideCompleted(event.target.checked);
@@ -82,11 +93,18 @@ function TodosList() {
     [setHideCompleted]
   );
 
+  //--------------------------------------------------------------------------------
+  // useMemo memoizes the filtered todos, recalculating only when todos or hideCompleted change.
+  // This optimization prevents unnecessary filtering on every render.
+  //--------------------------------------------------------------------------------
+
   const filteredTodos = useMemo(() => {
     return hideCompleted ? todos.filter((todo) => !todo.completed) : todos;
   }, [todos, hideCompleted]);
 
+  //--------------------------------------------------------------------------------
   useEffect(() => {
+    //flag to prevent memory leaks and errors from updating state on an unmounted component.
     let isMounted = true;
 
     async function fetchData() {
@@ -124,11 +142,13 @@ function TodosList() {
       setHideCompleted(storedHideCompleted === "true");
     }
 
+    // Cleanup function
     return () => {
       isMounted = false;
     };
   }, [userId, setHideCompleted]);
 
+  //--------------------------------------------------------------------------------
   if (isLoading) {
     return (
       <Box
@@ -142,6 +162,8 @@ function TodosList() {
     );
   }
 
+  //--------------------------------------------------------------------------------
+
   if (error) {
     return (
       <StyledPaper>
@@ -151,6 +173,8 @@ function TodosList() {
       </StyledPaper>
     );
   }
+
+  //--------------------------------------------------------------------------------
 
   return (
     <StyledPaper elevation={3}>

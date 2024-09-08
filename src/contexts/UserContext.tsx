@@ -1,6 +1,9 @@
 import React, { createContext, useState, useEffect, ReactNode } from "react";
 import { IUser } from "../Interface/IUser";
 
+////////////////////////////////////////////////////////////////////////////////////
+//                                Interfaces
+////////////////////////////////////////////////////////////////////////////////////
 interface UserContextType {
   selectedUser: IUser | null;
   setSelectedUser: (user: IUser | null) => void;
@@ -8,13 +11,17 @@ interface UserContextType {
   setHideCompleted: (hide: boolean) => void;
 }
 
-export const UserContext = createContext<UserContextType | undefined>(
-  undefined
-);
-
 interface UserProviderProps {
   children: ReactNode;
 }
+
+////////////////////////////////////////////////////////////////////////////////////
+//                                 Context
+////////////////////////////////////////////////////////////////////////////////////
+
+export const UserContext = createContext<UserContextType | undefined>(
+  undefined
+);
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [selectedUser, setSelectedUser] = useState<IUser | null>(() => {

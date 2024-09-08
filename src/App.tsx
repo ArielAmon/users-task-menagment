@@ -3,10 +3,36 @@ import { Outlet } from "react-router-dom";
 import "./App.css";
 import { IUser } from "./Interface/IUser";
 import { ApiUser } from "./Interface/ApiUser";
-import { CircularProgress } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Paper,
+  styled,
+  Typography,
+} from "@mui/material";
+import { API_URL } from "./Constants/Global";
 
-const API_URL: string = "https://jsonplaceholder.typicode.com/";
+////////////////////////////////////////////////////////////////////////////////////
+//                    Styled components
+////////////////////////////////////////////////////////////////////////////////////
 
+const StyledPaper = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(3),
+  backgroundColor: theme.palette.background.paper,
+  borderRadius: theme.shape.borderRadius * 2,
+  boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+  transition: "box-shadow 0.3s ease-in-out",
+  "&:hover": {
+    boxShadow: "0 6px 25px rgba(0, 0, 0, 0.15)",
+  },
+  display: "flex",
+  flexDirection: "column",
+  height: "100%",
+}));
+
+////////////////////////////////////////////////////////////////////////////////////
+//                  API Functions
+////////////////////////////////////////////////////////////////////////////////////
 async function fetchUsers(): Promise<ApiUser[]> {
   const response = await fetch(API_URL + "users");
   if (!response.ok) {
@@ -16,6 +42,9 @@ async function fetchUsers(): Promise<ApiUser[]> {
   return data;
 }
 
+////////////////////////////////////////////////////////////////////////////////////
+//                  Utilities Functions
+////////////////////////////////////////////////////////////////////////////////////
 function transformUsers(apiUsers: ApiUser[]): IUser[] {
   return apiUsers.map(({ id, name, username }) => ({
     id,
@@ -23,6 +52,10 @@ function transformUsers(apiUsers: ApiUser[]): IUser[] {
     username,
   }));
 }
+
+////////////////////////////////////////////////////////////////////////////////////
+//                  Component function
+////////////////////////////////////////////////////////////////////////////////////
 
 function App() {
   const [users, setUsers] = useState<IUser[]>([]);
@@ -49,14 +82,33 @@ function App() {
     fetchData();
   }, []);
 
+  //--------------------------------------------------------------------------------
   if (isLoading) {
-    return <CircularProgress />;
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="200px"
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
+
+  //--------------------------------------------------------------------------------
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return (
+      <StyledPaper>
+        <Typography color="error" variant="h6" textAlign="center">
+          Error: {error}
+        </Typography>
+      </StyledPaper>
+    );
   }
 
+  //--------------------------------------------------------------------------------
   return (
     <>
       <div className="modern-gradient-background"></div>

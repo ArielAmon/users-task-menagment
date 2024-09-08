@@ -1,4 +1,3 @@
-// import React from "react";
 import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
@@ -6,13 +5,18 @@ import { IUser } from "../Interface/IUser";
 import { styled } from "@mui/material/styles";
 import Avatar from "@mui/material/Avatar";
 import { lighten } from "@mui/material/styles";
-// import { useUserContext } from "../contexts/UseUserContext";
 import { useParams } from "react-router-dom";
 
+////////////////////////////////////////////////////////////////////////////////////
+//                        Interfaces
+////////////////////////////////////////////////////////////////////////////////////
 interface ClickableCardProps {
   userData: IUser;
 }
 
+////////////////////////////////////////////////////////////////////////////////////
+//                    Styled components
+////////////////////////////////////////////////////////////////////////////////////
 const StyledCard = styled(Card, {
   shouldForwardProp: (prop) => prop !== "isSelected",
 })<{ isSelected: boolean }>(({ theme, isSelected }) => ({
@@ -37,6 +41,8 @@ const StyledCard = styled(Card, {
   width: "100%",
 }));
 
+//----------------------------------------------------------------------------------
+
 const UserInfo = styled("div")({
   display: "flex",
   flexDirection: "row",
@@ -44,6 +50,7 @@ const UserInfo = styled("div")({
   gap: "16px",
 });
 
+//----------------------------------------------------------------------------------
 const UserAvatar = styled(Avatar)(({ theme }) => ({
   width: theme.spacing(5),
   height: theme.spacing(5),
@@ -52,10 +59,16 @@ const UserAvatar = styled(Avatar)(({ theme }) => ({
   fontWeight: "bold",
 }));
 
+//----------------------------------------------------------------------------------
+
 const StyledButton = styled(Button)(({ theme }) => ({
   minWidth: "100px",
   borderRadius: theme.shape.borderRadius,
 }));
+
+////////////////////////////////////////////////////////////////////////////////////
+//                  Component function
+////////////////////////////////////////////////////////////////////////////////////
 
 function User({ userData }: ClickableCardProps) {
   const { username, name, id } = userData;
